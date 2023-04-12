@@ -52,3 +52,41 @@ security:
 >  `firewalls`: Allow you to secure the part of your url
 > 
 > `access_control`:
+
+
+## User
+- An `User` class should implement `UserInterface` interface
+- The easiest way to generate a class is to use `maker bundle`
+
+**Command for generate this class:**
+```bash
+$ php bin/console make:migration
+$ php bin/console doctrine:migration:migrate
+```
+
+These command above will generate the config file below
+
+```yaml
+# config/packages/security.yaml
+security:
+    # ...
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+```
+
+>**User provider:** This user provider allows the security system to load user from any storage (e.g: database) based on user identifier (e.g: email or username).
+> The security system load user from two places:
+>
+> - `Load the User based on an identifier` during the login
+> - `Reload the User from the session` in each request, unless your firewall is `stateless`
+
+
+**Some user provider bundled with symfony:**
+- Entity User Provider from `Doctrine`
+- LDAP User Provider from `LDAP`
+- Memory User Provider from `config file`
+- Chain User Provider merge two or
+
