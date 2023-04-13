@@ -88,5 +88,48 @@ security:
 - Entity User Provider from `Doctrine`
 - LDAP User Provider from `LDAP`
 - Memory User Provider from `config file`
-- Chain User Provider merge two or
+- Chain User Provider merge two or more user providers into a new user provider
 
+> **NB:**
+> 
+> All user provider follow this pattern for their service ID
+> `security.user.provider.concrete.<your-provider-name>` where `<your-provider-name>` is the configuration key, e.g. `app_user_provider`
+
+
+**Registering the User: Hashing Passwords**
+- The security bundle provides password hashing and verification functionality.
+- The `User` class should implements the interface `PasswordAuthenticatedUserInterface`
+  
+```php
+// src/Entity/User.php
+
+// ...
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
+class User implements UserInterface, PasswordAuthenticatedUserInterface
+{
+    // ...
+
+    /**
+     * @return string the hashed password for this user
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+}
+
+```
+
+- Configure which password hasher should be used for this class
+
+```yaml
+# config/packages/security.yaml
+security:
+    # ...
+    password_hashers:
+        # Use native password hasher, which auto-selects and migrates the best
+        # possible hashing algorithm (which currently is "bcrypt")
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+```
+- Then you can inject the password hashere service
